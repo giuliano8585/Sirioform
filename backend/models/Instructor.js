@@ -19,3 +19,4 @@ const InstructorSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Instructor', InstructorSchema);
+

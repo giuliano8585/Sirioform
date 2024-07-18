@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -14,6 +15,7 @@ app.use(bodyParser.json());
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/centers', require('./routes/centers'));
 app.use('/api/instructors', require('./routes/instructors'));
+app.use('/api', require('./routes/protected')); // Nuova rotta protetta
 
 // Connect to MongoDB
 const mongoUri = process.env.MONGO_URI;

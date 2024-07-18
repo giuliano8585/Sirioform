@@ -1,6 +1,6 @@
-// controllers/centerController.js
-const Center = require('../models/center');
+const Center = require('../models/Center');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 exports.registerCenter = async (req, res) => {
   const { name, piva, address, city, region, email, phone, username, password, repeatPassword } = req.body;
@@ -27,7 +27,8 @@ exports.registerCenter = async (req, res) => {
       email,
       phone,
       username,
-      password: hashedPassword
+      password: hashedPassword,
+      isActive: false
     });
 
     await newCenter.save();
@@ -36,3 +37,32 @@ exports.registerCenter = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+exports.getUnapprovedCenters = async (req, res) => {
+  try {
+    const centers = await Center.find({ isActive: false });
+    res.json(centers);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.approveCenter = async (req, res) => {
+  try {
+    const center = await Center.findByIdAndUpdate(req.params.id, { isActive: true }, { new: true });
+    res.json(center);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getAllCenters = async (req, res) => {
+  try {
+    const centers = await Center.find({ isActive: true });
+    res.json(centers);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
