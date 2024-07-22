@@ -38,7 +38,7 @@ exports.login = async (req, res) => {
       }
     };
 
-    jwt.sign(payload, 'yourSecretKey', { expiresIn: '1h' }, (err, token) => {
+    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
       res.json({ token });
     });
@@ -47,5 +47,26 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.getLoggedInInstructor = async (req, res) => {
+  try {
+    const instructor = await Instructor.findById(req.user.id).select('-password');
+    if (!instructor) {
+      return res.status(404).json({ error: 'Instructor not found' });
+    }
+    res.json(instructor);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-
+exports.getLoggedInCenter = async (req, res) => {
+  try {
+    const center = await Center.findById(req.user.id).select('-password');
+    if (!center) {
+      return res.status(404).json({ error: 'Center not found' });
+    }
+    res.json(center);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

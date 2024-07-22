@@ -62,9 +62,22 @@ exports.approveInstructor = async (req, res) => {
 
 exports.getAllInstructors = async (req, res) => {
   try {
-    const instructors = await Instructor.find({ isActive: true });
+    const instructors = await Instructor.find();
     res.json(instructors);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getInstructorById = async (req, res) => {
+  try {
+    const instructor = await Instructor.findById(req.params.id);
+    if (!instructor) {
+      return res.status(404).json({ error: 'Instructor not found' });
+    }
+    res.json(instructor);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+

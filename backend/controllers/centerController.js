@@ -58,11 +58,25 @@ exports.approveCenter = async (req, res) => {
 
 exports.getAllCenters = async (req, res) => {
   try {
-    const centers = await Center.find({ isActive: true });
+    const centers = await Center.find();
     res.json(centers);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getCenterById = async (req, res) => {
+  try {
+    const center = await Center.findById(req.params.id);
+    if (!center) {
+      return res.status(404).json({ error: 'Center not found' });
+    }
+    res.json(center);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
 
 

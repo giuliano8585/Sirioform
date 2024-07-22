@@ -25,8 +25,10 @@ const Login = () => {
       setLoading(false); // Rimuove lo stato di caricamento
       if (formData.role === 'admin') {
         window.location.href = '/admin-dashboard';
+      } else if (formData.role === 'instructor') {
+        window.location.href = '/instructor-dashboard';
       } else {
-        window.location.href = '/user-dashboard';
+        window.location.href = '/center-dashboard';
       }
     } catch (err) {
       setLoading(false); // Rimuove lo stato di caricamento in caso di errore
@@ -64,6 +66,7 @@ const Login = () => {
 };
 
 export default Login;
+
 
 
 
