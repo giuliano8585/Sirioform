@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const InstructorDashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,14 +36,20 @@ const InstructorDashboard = () => {
     return <div>{error}</div>;
   }
 
+  const goToViewKits = () => {
+    navigate('/view-kits');
+  };
+
   return (
     <div>
       <h1>Instructor Dashboard</h1>
       <button onClick={() => alert(JSON.stringify(data, null, 2))}>Anagrafica</button>
+      <button onClick={goToViewKits}>Visualizza Kit</button>
     </div>
   );
 };
 
 export default InstructorDashboard;
+
 
 

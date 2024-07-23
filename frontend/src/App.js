@@ -10,6 +10,8 @@ import CentersList from './components/CenterList';
 import InstructorsList from './components/InstructorList';
 import InstructorDashboard from './pages/InstructorDashboard'; // Importa il nuovo componente
 import CenterDashboard from './pages/CenterDashboard'; // Importa il nuovo componente
+import CreateKit from './components/CreateKit'; // Importa il componente CreateKit
+import ViewKits from './components/ViewKits'; // Importa il componente ViewKits
 
 const App = () => {
   return (
@@ -24,6 +26,8 @@ const App = () => {
         <Route path="/instructors-list" element={<InstructorsList />} />
         <Route path="/instructor-dashboard" element={<InstructorDashboard />} /> {/* Aggiungi questa riga */}
         <Route path="/center-dashboard" element={<CenterDashboard />} /> {/* Aggiungi questa riga */}
+        <Route path="/create-kit" element={<CreateKit />} /> {/* Aggiungi questa riga */}
+        <Route path="/view-kits" element={<ViewKits />} /> {/* Aggiungi questa riga */}
       </Routes>
     </Router>
   );

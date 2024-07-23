@@ -15,6 +15,8 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/centers', require('./routes/centers'));
 app.use('/api/instructors', require('./routes/instructors'));
 app.use('/api', require('./routes/protected')); // Nuova rotta protetta
+app.use('/api/kits', require('./routes/kits'));
+
 
 // Connect to MongoDB
 const mongoUri = process.env.MONGO_URI;
