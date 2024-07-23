@@ -35,21 +35,88 @@ const CreateKit = () => {
   };
 
   return (
-    <div>
-      <h1>Crea Kit</h1>
+    <div className="container mt-5">
+      <h1 className="mb-4">Crea Kit</h1>
       <form onSubmit={handleSubmit}>
-        <input name="code" value={kitData.code} onChange={handleChange} placeholder="Codice Kit" required />
-        <input name="type" value={kitData.type} onChange={handleChange} placeholder="Tipologia" required />
-        <input name="description" value={kitData.description} onChange={handleChange} placeholder="Descrizione" required />
-        <input name="cost1" value={kitData.cost1} onChange={handleChange} placeholder="Costo 1" required />
-        <input name="cost2" value={kitData.cost2} onChange={handleChange} placeholder="Costo 2" required />
-        <input name="cost3" value={kitData.cost3} onChange={handleChange} placeholder="Costo 3" required />
-        <button type="submit">Crea</button>
-        <button type="button" onClick={goBack}>Indietro</button>
+        <div className="form-group mb-3">
+          <label htmlFor="code">Codice Kit</label>
+          <input
+            id="code"
+            name="code"
+            value={kitData.code}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Codice Kit"
+            required
+          />
+        </div>
+        <div className="form-group mb-3">
+          <label htmlFor="type">Tipologia</label>
+          <input
+            id="type"
+            name="type"
+            value={kitData.type}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Tipologia"
+            required
+          />
+        </div>
+        <div className="form-group mb-3">
+          <label htmlFor="description">Descrizione</label>
+          <input
+            id="description"
+            name="description"
+            value={kitData.description}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Descrizione"
+            required
+          />
+        </div>
+        <div className="form-group mb-3">
+          <label htmlFor="cost1">Costo 1</label>
+          <input
+            id="cost1"
+            name="cost1"
+            value={kitData.cost1}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Costo 1"
+            required
+          />
+        </div>
+        <div className="form-group mb-3">
+          <label htmlFor="cost2">Costo 2</label>
+          <input
+            id="cost2"
+            name="cost2"
+            value={kitData.cost2}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Costo 2"
+            required
+          />
+        </div>
+        <div className="form-group mb-3">
+          <label htmlFor="cost3">Costo 3</label>
+          <input
+            id="cost3"
+            name="cost3"
+            value={kitData.cost3}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Costo 3"
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-primary me-2">Crea</button>
+        <button type="button" className="btn btn-secondary" onClick={goBack}>Indietro</button>
       </form>
     </div>
   );
 };
 
 export default CreateKit;
+
 

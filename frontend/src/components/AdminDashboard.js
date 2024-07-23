@@ -1,59 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import './AdminDashboard.css'; // Assicurati di creare e importare il file CSS
 
 const AdminDashboard = () => {
-  const [centers, setCenters] = useState([]);
-  const [instructors, setInstructors] = useState([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUnapproved = async () => {
-      const resCenters = await axios.get('http://localhost:5000/api/centers/unapproved');
-      const resInstructors = await axios.get('http://localhost:5000/api/instructors/unapproved');
-      setCenters(resCenters.data);
-      setInstructors(resInstructors.data);
-    };
-
-    fetchUnapproved();
-  }, []);
-
-  const approveCenter = async (id) => {
-    await axios.put(`http://localhost:5000/api/centers/approve/${id}`);
-    setCenters(centers.filter(center => center._id !== id));
-  };
-
-  const approveInstructor = async (id) => {
-    await axios.put(`http://localhost:5000/api/instructors/approve/${id}`);
-    setInstructors(instructors.filter(instructor => instructor._id !== id));
-  };
 
   const goToCreateKit = () => {
     navigate('/create-kit');
   };
 
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
-      <h2>Centers</h2>
-      <ul>
-        {centers.map(center => (
-          <li key={center._id}>
-            {center.name} - <button onClick={() => approveCenter(center._id)}>Approve</button>
-          </li>
-        ))}
-      </ul>
-      <h2>Instructors</h2>
-      <ul>
-        {instructors.map(instructor => (
-          <li key={instructor._id}>
-            {instructor.firstName} {instructor.lastName} - <button onClick={() => approveInstructor(instructor._id)}>Approve</button>
-          </li>
-        ))}
-      </ul>
-      <Link to="/centers-list">Lista Centri</Link>
-      <Link to="/instructors-list">Lista Istruttori</Link>
-      <button onClick={goToCreateKit}>Crea Kit</button>
+    <div className="container-fluid">
+      <div className="row">
+        <nav className="col-md-3 d-none d-md-block bg-light sidebar">
+          <div className="sidebar-sticky">
+            <h1 className="h4">Admin Dashboard</h1>
+            <ul className="nav flex-column">
+              <li className="nav-item mb-2">
+                <Link to="/centers-list" className="nav-link btn btn-primary w-100 btn-lg">
+                  Lista Centri
+                </Link>
+              </li>
+              <li className="nav-item mb-2">
+                <Link to="/instructors-list" className="nav-link btn btn-primary w-100 btn-lg">
+                  Lista Istruttori
+                </Link>
+              </li>
+              <li className="nav-item mb-2">
+                <Link to="/unapproved-centers" className="nav-link btn btn-primary w-100 btn-lg">
+                  Centri da Abilitare
+                </Link>
+              </li>
+              <li className="nav-item mb-2">
+                <Link to="/unapproved-instructors" className="nav-link btn btn-primary w-100 btn-lg">
+                  Istruttori da Abilitare
+                </Link>
+              </li>
+              <li className="nav-item mb-2">
+                <button className="nav-link btn btn-primary w-100 btn-lg" onClick={goToCreateKit}>
+                  Crea Kit
+                </button>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
     </div>
   );
 };

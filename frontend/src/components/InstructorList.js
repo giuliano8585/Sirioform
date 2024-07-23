@@ -1,4 +1,3 @@
-// src/components/InstructorList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -19,17 +18,46 @@ const InstructorList = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Lista Istruttori</h1>
-      <ul>
-        {instructors.map((instructor) => (
-          <li key={instructor._id}>
-            <p>Nome: {instructor.firstName} {instructor.lastName}</p>
-            <p>Email: {instructor.email}</p>
-            <p>Telefono: {instructor.phone}</p>
-          </li>
-        ))}
-      </ul>
+    <div className="container mt-4">
+      <h1 className="mb-4">Lista Istruttori</h1>
+      <div className="table-responsive">
+        <table className="table table-striped table-bordered">
+          <thead className="thead-dark">
+            <tr>
+              <th>Numero Brevetto</th>
+              <th>Nome</th>
+              <th>Cognome</th>
+              <th>P.Iva</th>
+              <th>Indirizzo</th>
+              <th>Regione</th>
+              <th>Telefono</th>
+              <th>E-Mail</th>
+              <th>Codice Fiscale</th>
+              <th>Stato</th>
+            </tr>
+          </thead>
+          <tbody>
+            {instructors.map((instructor) => (
+              <tr key={instructor._id}>
+                <td>{instructor.brevetNumber}</td>
+                <td>{instructor.firstName}</td>
+                <td>{instructor.lastName}</td>
+                <td>{instructor.piva}</td>
+                <td>{instructor.address}</td>
+                <td>{instructor.region}</td>
+                <td>{instructor.phone}</td>
+                <td>{instructor.email}</td>
+                <td>{instructor.fiscalCode}</td>
+                <td>
+                  <button className="btn btn-primary mb-2">Abilitazioni</button>
+                  <button className="btn btn-danger">Elimina</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <button className="btn btn-secondary" onClick={() => window.history.back()}>Indietro</button>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './ViewKits.css'; // Assicurati di avere un file CSS per eventuali stili personalizzati
 
 const ViewKits = () => {
   const [kits, setKits] = useState([]);
@@ -23,21 +24,25 @@ const ViewKits = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Visualizza Kit</h2>
-      <ul>
+    <div className="container mt-5">
+      <h2 className="mb-4">Visualizza Kit</h2>
+      <div className="row">
         {kits.map(kit => (
-          <li key={kit._id}>
-            <h3>{kit.code}</h3>
-            <p>{kit.type}</p>
-            <p>{kit.description}</p>
-            <p>Costo 1: {kit.cost1}</p>
-            <p>Costo 2: {kit.cost2}</p>
-            <p>Costo 3: {kit.cost3}</p>
-            <button>Compra</button>
-          </li>
+          <div key={kit._id} className="col-md-4">
+            <div className="card mb-4">
+              <div className="card-body">
+                <h5 className="card-title">Codice: {kit.code}</h5>
+                <h6 className="card-subtitle mb-2 text-muted">Nome: {kit.type}</h6>
+                <p className="card-text">Descrizione: {kit.description}</p>
+                <p className="card-text">Prezzo 1: {kit.cost1}€</p>
+                <p className="card-text">Prezzo 2: {kit.cost2}€</p>
+                <p className="card-text">Prezzo 3: {kit.cost3}€</p>
+                <button className="btn btn-primary">Compra</button>
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

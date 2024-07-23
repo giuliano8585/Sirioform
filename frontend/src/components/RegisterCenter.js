@@ -1,4 +1,3 @@
-// src/components/RegisterCenter.js
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -31,21 +30,55 @@ const RegisterCenter = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input name="name" value={formData.name} onChange={handleChange} placeholder="Name" required />
-      <input name="piva" value={formData.piva} onChange={handleChange} placeholder="P. IVA" required />
-      <input name="address" value={formData.address} onChange={handleChange} placeholder="Address" required />
-      <input name="city" value={formData.city} onChange={handleChange} placeholder="City" required />
-      <input name="region" value={formData.region} onChange={handleChange} placeholder="Region" required />
-      <input name="email" value={formData.email} onChange={handleChange} placeholder="Email" required />
-      <input name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone" required />
-      <input name="username" value={formData.username} onChange={handleChange} placeholder="Username" required />
-      <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" required />
-      <input type="password" name="repeatPassword" value={formData.repeatPassword} onChange={handleChange} placeholder="Repeat Password" required />
-      <button type="submit">Register</button>
-    </form>
+    <div className="container mt-5">
+      <h2 className="mb-4">Register Center</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label htmlFor="name" className="form-label">Name</label>
+          <input type="text" className="form-control" id="name" name="name" value={formData.name} onChange={handleChange} placeholder="Name" required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="piva" className="form-label">P. IVA</label>
+          <input type="text" className="form-control" id="piva" name="piva" value={formData.piva} onChange={handleChange} placeholder="P. IVA" required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="address" className="form-label">Address</label>
+          <input type="text" className="form-control" id="address" name="address" value={formData.address} onChange={handleChange} placeholder="Address" required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="city" className="form-label">City</label>
+          <input type="text" className="form-control" id="city" name="city" value={formData.city} onChange={handleChange} placeholder="City" required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="region" className="form-label">Region</label>
+          <input type="text" className="form-control" id="region" name="region" value={formData.region} onChange={handleChange} placeholder="Region" required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label">Email</label>
+          <input type="email" className="form-control" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="phone" className="form-label">Phone</label>
+          <input type="text" className="form-control" id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone" required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="username" className="form-label">Username</label>
+          <input type="text" className="form-control" id="username" name="username" value={formData.username} onChange={handleChange} placeholder="Username" required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="password" className="form-label">Password</label>
+          <input type="password" className="form-control" id="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" required />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="repeatPassword" className="form-label">Repeat Password</label>
+          <input type="password" className="form-control" id="repeatPassword" name="repeatPassword" value={formData.repeatPassword} onChange={handleChange} placeholder="Repeat Password" required />
+        </div>
+        <button type="submit" className="btn btn-primary">Register</button>
+      </form>
+    </div>
   );
 };
 
 export default RegisterCenter;
+
 

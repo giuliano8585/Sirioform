@@ -1,4 +1,3 @@
-// src/components/Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../App.css'; // Percorso corretto per il file CSS
@@ -41,24 +40,53 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="container">
+      <h2 className="my-4">Login</h2>
       <form onSubmit={handleSubmit}>
-        <input name="username" value={formData.username} onChange={handleChange} placeholder="Username" required />
-        <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" required />
-        <select name="role" value={formData.role} onChange={handleChange}>
-          <option value="center">Center</option>
-          <option value="instructor">Instructor</option>
-          <option value="admin">Admin</option>
-        </select>
-        <button type="submit">Login</button>
+        <div className="mb-3">
+          <label className="form-label">Username</label>
+          <input 
+            type="text" 
+            className="form-control" 
+            name="username" 
+            value={formData.username} 
+            onChange={handleChange} 
+            placeholder="Username" 
+            required 
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Password</label>
+          <input 
+            type="password" 
+            className="form-control" 
+            name="password" 
+            value={formData.password} 
+            onChange={handleChange} 
+            placeholder="Password" 
+            required 
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Role</label>
+          <select 
+            className="form-select" 
+            name="role" 
+            value={formData.role} 
+            onChange={handleChange}
+          >
+            <option value="center">Center</option>
+            <option value="instructor">Instructor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <button type="submit" className="btn btn-primary">
+          {loading ? 'Loading...' : 'Login'}
+        </button>
       </form>
-      {loading && <div>Loading...</div>} {/* Mostra il caricamento */}
       {errorMessage && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={() => setErrorMessage('')}>&times;</span>
-            <p>{errorMessage}</p>
-          </div>
+        <div className="alert alert-danger mt-3">
+          {errorMessage}
         </div>
       )}
     </div>
