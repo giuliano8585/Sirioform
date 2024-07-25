@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const RegisterInstructor = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +20,8 @@ const RegisterInstructor = () => {
     password: '',
     repeatPassword: ''
   });
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
     setFormData({
@@ -29,17 +32,32 @@ const RegisterInstructor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!recaptchaToken) {
+      alert('Please complete the reCAPTCHA');
+      return;
+    }
+
     try {
-      const res = await axios.post('http://localhost:5000/api/instructors/register', formData);
+      const res = await axios.post('http://localhost:5000/api/instructors/register', {
+        ...formData,
+        recaptchaToken
+      });
       console.log(res.data);
+      setMessage('Registrazione avvenuta con successo! Controlla la tua email per conferma.');
     } catch (err) {
       console.error(err.response.data);
+      setMessage('Errore nella registrazione. Riprova.');
     }
+  };
+
+  const handleRecaptcha = (value) => {
+    setRecaptchaToken(value);
   };
 
   return (
     <div className="container mt-5">
       <h2 className="mb-4">Register Instructor</h2>
+      {message && <div className="alert alert-info">{message}</div>}
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-md-6 mb-3">
@@ -98,6 +116,12 @@ const RegisterInstructor = () => {
             <label htmlFor="repeatPassword" className="form-label">Repeat Password</label>
             <input type="password" className="form-control" id="repeatPassword" name="repeatPassword" value={formData.repeatPassword} onChange={handleChange} placeholder="Repeat Password" required />
           </div>
+          <div className="col-md-12 mb-3">
+            <ReCAPTCHA
+              sitekey="6LfhQhcqAAAAAHPx5jGmeyWyQLJIwLZwmbIk9iHp"  // Sostituisci con la tua Site Key
+              onChange={handleRecaptcha}
+            />
+          </div>
           <div className="col-md-12 text-center">
             <button type="submit" className="btn btn-primary">Register</button>
           </div>
@@ -108,3 +132,4 @@ const RegisterInstructor = () => {
 };
 
 export default RegisterInstructor;
+

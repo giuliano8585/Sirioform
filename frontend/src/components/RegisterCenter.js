@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const RegisterCenter = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +16,8 @@ const RegisterCenter = () => {
     password: '',
     repeatPassword: ''
   });
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,17 +25,32 @@ const RegisterCenter = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await axios.post('http://localhost:5000/api/centers/register', formData);
-      console.log(res.data);
-    } catch (err) {
-      console.error('Error response:', err.response.data); // Log the error response
+    if (!recaptchaToken) {
+      alert('Please complete the reCAPTCHA');
+      return;
     }
+
+    try {
+      const res = await axios.post('http://localhost:5000/api/centers/register', {
+        ...formData,
+        recaptchaToken
+      });
+      console.log(res.data);
+      setMessage('Registrazione avvenuta con successo! Controlla la tua email per conferma.');
+    } catch (err) {
+      console.error('Error response:', err.response.data);
+      setMessage('Errore nella registrazione. Riprova.');
+    }
+  };
+
+  const handleRecaptcha = (value) => {
+    setRecaptchaToken(value);
   };
 
   return (
     <div className="container mt-5">
       <h2 className="mb-4">Register Center</h2>
+      {message && <div className="alert alert-info">{message}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="name" className="form-label">Name</label>
@@ -73,12 +92,15 @@ const RegisterCenter = () => {
           <label htmlFor="repeatPassword" className="form-label">Repeat Password</label>
           <input type="password" className="form-control" id="repeatPassword" name="repeatPassword" value={formData.repeatPassword} onChange={handleChange} placeholder="Repeat Password" required />
         </div>
-        <button type="submit" className="btn btn-primary">Register</button>
+        <ReCAPTCHA
+          sitekey="6LfhQhcqAAAAAHPx5jGmeyWyQLJIwLZwmbIk9iHp"  // Sostituisci con la tua Site Key
+          onChange={handleRecaptcha}
+        />
+        <button type="submit" className="btn btn-primary mt-3">Register</button>
       </form>
     </div>
   );
 };
 
 export default RegisterCenter;
-
 
