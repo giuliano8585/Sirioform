@@ -14,6 +14,8 @@ import CreateKit from './components/CreateKit'; // Importa il componente CreateK
 import ViewKits from './components/ViewKits'; // Importa il componente ViewKits
 import UnapprovedCenters from './pages/UnapprovedCenters';
 import UnapprovedInstructors from './pages/UnapprovedInstructors';
+import CreateSanitario from './pages/CreateSanitario';
+import ListaSanitari from './pages/ListaSanitari';
 
 const App = () => {
   return (
@@ -32,6 +34,8 @@ const App = () => {
         <Route path="/view-kits" element={<ViewKits />} /> {/* Aggiungi questa riga */}
         <Route path="/unapproved-centers" element={<UnapprovedCenters />} />
         <Route path="/unapproved-instructors" element={<UnapprovedInstructors />} />
+        <Route path="/create-sanitario" element={<CreateSanitario />} />
+        <Route path="/sanitarios-list" element={<ListaSanitari />} />
       </Routes>
     </Router>
   );

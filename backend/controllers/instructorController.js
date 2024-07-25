@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sendEmail = require('../utils/emailService');
 const axios = require('axios');
+const Sanitario = require('../models/Sanitario'); // Importa il modello del sanitario
 
 exports.registerInstructor = async (req, res) => {
   const { firstName, lastName, fiscalCode, brevetNumber, qualifications, piva, address, city, region, email, phone, username, password, repeatPassword, recaptchaToken } = req.body;
@@ -42,7 +43,8 @@ exports.registerInstructor = async (req, res) => {
       phone,
       username,
       password: hashedPassword,
-      isActive: false
+      isActive: false,
+      sanitarios: [] // Inizializza l'array dei sanitari
     });
 
     await newInstructor.save();
@@ -89,7 +91,7 @@ exports.getAllInstructors = async (req, res) => {
 
 exports.getInstructorById = async (req, res) => {
   try {
-    const instructor = await Instructor.findById(req.params.id);
+    const instructor = await Instructor.findById(req.params.id).populate('sanitarios');
     if (!instructor) {
       return res.status(404).json({ error: 'Instructor not found' });
     }
@@ -99,3 +101,53 @@ exports.getInstructorById = async (req, res) => {
   }
 };
 
+// Assegna un sanitario a un istruttore
+exports.assignSanitario = async (req, res) => {
+  const { instructorId, sanitarioId } = req.body;
+  try {
+    const instructor = await Instructor.findById(instructorId);
+    if (!instructor) {
+      return res.status(404).json({ error: 'Instructor not found' });
+    }
+
+    if (instructor.sanitarios.includes(sanitarioId)) {
+      return res.status(400).json({ error: 'Sanitario already assigned to this instructor' });
+    }
+
+    instructor.sanitarios.push(sanitarioId);
+    await instructor.save();
+    res.status(200).json(instructor);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Ottiene i sanitari assegnati a un istruttore
+exports.getAssignedSanitarios = async (req, res) => {
+  try {
+    const instructor = await Instructor.findById(req.params.id).populate('sanitarios');
+    if (!instructor) {
+      return res.status(404).json({ error: 'Instructor not found' });
+    }
+    res.status(200).json(instructor.sanitarios);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Rimuove un sanitario da un istruttore
+exports.removeSanitario = async (req, res) => {
+  const { instructorId, sanitarioId } = req.body;
+  try {
+    const instructor = await Instructor.findById(instructorId);
+    if (!instructor) {
+      return res.status(404).json({ error: 'Instructor not found' });
+    }
+
+    instructor.sanitarios.pull(sanitarioId);
+    await instructor.save();
+    res.status(200).json(instructor);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

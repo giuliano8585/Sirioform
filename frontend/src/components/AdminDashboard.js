@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// src/pages/AdminDashboard.js
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './AdminDashboard.css'; // Assicurati di creare e importare il file CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
   const goToCreateKit = () => {
     navigate('/create-kit');
+  };
+
+  const goToCreateSanitario = () => {
+    navigate('/create-sanitario');
   };
 
   return (
@@ -41,6 +46,16 @@ const AdminDashboard = () => {
                 <button className="nav-link btn btn-primary w-100 btn-lg" onClick={goToCreateKit}>
                   Crea Kit
                 </button>
+              </li>
+              <li className="nav-item mb-2">
+                <button className="nav-link btn btn-primary w-100 btn-lg" onClick={goToCreateSanitario}>
+                  Crea Sanitario
+                </button>
+              </li>
+              <li className="nav-item mb-2">
+                <Link to="/sanitarios-list" className="nav-link btn btn-primary w-100 btn-lg">
+                  Lista Sanitari
+                </Link>
               </li>
             </ul>
           </div>

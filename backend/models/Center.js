@@ -1,5 +1,3 @@
-// models/Center.js
-// models/Center.js
 const mongoose = require('mongoose');
 
 const CenterSchema = new mongoose.Schema({
@@ -12,9 +10,11 @@ const CenterSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   username: { type: String, required: true },
   password: { type: String, required: true },
-  isActive: { type: Boolean, default: false }
+  isActive: { type: Boolean, default: false },
+  sanitarios: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Sanitario' }] // Aggiunta dell'array di sanitari
 });
 
 module.exports = mongoose.model('Center', CenterSchema);
+
 
 

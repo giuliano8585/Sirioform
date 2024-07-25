@@ -16,7 +16,7 @@ app.use('/api/centers', require('./routes/centers'));
 app.use('/api/instructors', require('./routes/instructors'));
 app.use('/api', require('./routes/protected')); // Nuova rotta protetta
 app.use('/api/kits', require('./routes/kits'));
-
+app.use('/api/sanitarios', require('./routes/sanitarios')); // Rotta per i sanitari
 
 // Connect to MongoDB
 const mongoUri = process.env.MONGO_URI;
@@ -29,4 +29,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-

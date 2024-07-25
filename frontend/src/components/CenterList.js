@@ -3,6 +3,12 @@ import axios from 'axios';
 
 const CenterList = () => {
   const [centers, setCenters] = useState([]);
+  const [selectedCenter, setSelectedCenter] = useState(null);
+  const [sanitarios, setSanitarios] = useState([]);
+  const [allSanitarios, setAllSanitarios] = useState([]);
+  const [sanitarioToAdd, setSanitarioToAdd] = useState('');
+  const [showSanitarioModal, setShowSanitarioModal] = useState(false);
+  const [showAssignedSanitariosModal, setShowAssignedSanitariosModal] = useState(false);
 
   useEffect(() => {
     const fetchCenters = async () => {
@@ -16,6 +22,56 @@ const CenterList = () => {
 
     fetchCenters();
   }, []);
+
+  const handleAssignSanitario = async (centerId) => {
+    setSelectedCenter(centerId);
+    try {
+      const res = await axios.get('http://localhost:5000/api/sanitarios');
+      setAllSanitarios(res.data);
+      setShowSanitarioModal(true);
+    } catch (err) {
+      console.error('Error fetching sanitarios:', err);
+    }
+  };
+
+  const handleAddSanitario = async () => {
+    if (!sanitarioToAdd) return;
+
+    try {
+      await axios.post('http://localhost:5000/api/centers/assign-sanitario', {
+        centerId: selectedCenter,
+        sanitarioId: sanitarioToAdd,
+      });
+      alert('Sanitario assegnato con successo!');
+      setSanitarioToAdd('');
+      setShowSanitarioModal(false);
+    } catch (err) {
+      console.error('Error assigning sanitario:', err);
+    }
+  };
+
+  const handleViewSanitarios = async (centerId) => {
+    setSelectedCenter(centerId);
+    try {
+      const res = await axios.get(`http://localhost:5000/api/centers/${centerId}/sanitarios`);
+      setSanitarios(res.data);
+      setShowAssignedSanitariosModal(true);
+    } catch (err) {
+      console.error('Error fetching assigned sanitarios:', err);
+    }
+  };
+
+  const handleRemoveSanitario = async (sanitarioId) => {
+    try {
+      await axios.post('http://localhost:5000/api/centers/remove-sanitario', {
+        centerId: selectedCenter,
+        sanitarioId,
+      });
+      setSanitarios(sanitarios.filter((s) => s._id !== sanitarioId));
+    } catch (err) {
+      console.error('Error removing sanitario:', err);
+    }
+  };
 
   return (
     <div className="container mt-4">
@@ -47,11 +103,22 @@ const CenterList = () => {
                 <td>{center.phone}</td>
                 <td>{center.email}</td>
                 <td>
-                  <button className="btn btn-primary mb-2">Assegna Sanitario</button>
+                  <button
+                    className="btn btn-primary mb-2"
+                    onClick={() => handleAssignSanitario(center._id)}
+                  >
+                    Assegna Sanitario
+                  </button>
                   <button className="btn btn-primary mb-2">Istruttori</button>
                   <button className="btn btn-primary mb-2">Assegna Istruttori</button>
                   <button className="btn btn-primary mb-2">Abilita</button>
-                  <button className="btn btn-danger">Elimina</button>
+                  <button className="btn btn-danger mb-2">Elimina</button>
+                  <button
+                    className="btn btn-info"
+                    onClick={() => handleViewSanitarios(center._id)}
+                  >
+                    Lista Sanitari
+                  </button>
                 </td>
               </tr>
             ))}
@@ -59,11 +126,80 @@ const CenterList = () => {
         </table>
       </div>
       <button className="btn btn-secondary" onClick={() => window.history.back()}>Indietro</button>
+
+      {/* Modal per Assegnare Sanitario */}
+      {showSanitarioModal && (
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Assegna Sanitario</h5>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setShowSanitarioModal(false)}
+                >
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <select
+                  className="form-control mb-3"
+                  value={sanitarioToAdd}
+                  onChange={(e) => setSanitarioToAdd(e.target.value)}
+                >
+                  <option value="">Seleziona Sanitario</option>
+                  {allSanitarios.map((sanitario) => (
+                    <option key={sanitario._id} value={sanitario._id}>
+                      {sanitario.firstName} {sanitario.lastName}
+                    </option>
+                  ))}
+                </select>
+                <button className="btn btn-primary" onClick={handleAddSanitario}>
+                  Assegna
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal per Visualizzare Sanitari */}
+      {showAssignedSanitariosModal && (
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Sanitari Associati</h5>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setShowAssignedSanitariosModal(false)}
+                >
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <ul className="list-group">
+                  {sanitarios.map((sanitario) => (
+                    <li key={sanitario._id} className="list-group-item d-flex justify-content-between align-items-center">
+                      {sanitario.firstName} {sanitario.lastName}
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleRemoveSanitario(sanitario._id)}
+                      >
+                        Elimina
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default CenterList;
-
-
-

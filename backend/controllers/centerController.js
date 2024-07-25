@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sendEmail = require('../utils/emailService');
 const axios = require('axios');
+const Sanitario = require('../models/Sanitario'); // Importa il modello del sanitario
 
 exports.registerCenter = async (req, res) => {
   const { name, piva, address, city, region, email, phone, username, password, repeatPassword, recaptchaToken } = req.body;
@@ -38,7 +39,8 @@ exports.registerCenter = async (req, res) => {
       phone,
       username,
       password: hashedPassword,
-      isActive: false
+      isActive: false,
+      sanitarios: [] // Inizializza l'array dei sanitari
     });
 
     await newCenter.save();
@@ -95,4 +97,53 @@ exports.getCenterById = async (req, res) => {
   }
 };
 
+// Assegna un sanitario a un centro
+exports.assignSanitario = async (req, res) => {
+  const { centerId, sanitarioId } = req.body;
+  try {
+    const center = await Center.findById(centerId);
+    if (!center) {
+      return res.status(404).json({ error: 'Center not found' });
+    }
 
+    if (center.sanitarios.includes(sanitarioId)) {
+      return res.status(400).json({ error: 'Sanitario already assigned to this center' });
+    }
+
+    center.sanitarios.push(sanitarioId);
+    await center.save();
+    res.status(200).json(center);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Ottiene i sanitari assegnati a un centro
+exports.getAssignedSanitarios = async (req, res) => {
+  try {
+    const center = await Center.findById(req.params.id).populate('sanitarios');
+    if (!center) {
+      return res.status(404).json({ error: 'Center not found' });
+    }
+    res.status(200).json(center.sanitarios);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Rimuove un sanitario da un centro
+exports.removeSanitario = async (req, res) => {
+  const { centerId, sanitarioId } = req.body;
+  try {
+    const center = await Center.findById(centerId);
+    if (!center) {
+      return res.status(404).json({ error: 'Center not found' });
+    }
+
+    center.sanitarios.pull(sanitarioId);
+    await center.save();
+    res.status(200).json(center);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
