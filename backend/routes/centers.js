@@ -1,4 +1,6 @@
 const express = require('express');
+const { assignInstructor, removeInstructor, getAssignedInstructors } = require('../controllers/centerController');
+
 const router = express.Router();
 const {
   registerCenter,
@@ -22,6 +24,10 @@ router.get('/:id', getCenterById);
 router.post('/assign-sanitario', assignSanitario);
 router.get('/:id/sanitarios', getAssignedSanitarios);
 router.post('/remove-sanitario', removeSanitario);
+router.post('/assign-instructor', assignInstructor);
+router.post('/remove-instructor', removeInstructor);
+router.get('/:id/instructors', getAssignedInstructors);
+
 
 module.exports = router;
 

@@ -5,10 +5,15 @@ const CenterList = () => {
   const [centers, setCenters] = useState([]);
   const [selectedCenter, setSelectedCenter] = useState(null);
   const [sanitarios, setSanitarios] = useState([]);
+  const [instructors, setInstructors] = useState([]);
   const [allSanitarios, setAllSanitarios] = useState([]);
+  const [allInstructors, setAllInstructors] = useState([]);
   const [sanitarioToAdd, setSanitarioToAdd] = useState('');
+  const [instructorToAdd, setInstructorToAdd] = useState('');
   const [showSanitarioModal, setShowSanitarioModal] = useState(false);
+  const [showInstructorModal, setShowInstructorModal] = useState(false);
   const [showAssignedSanitariosModal, setShowAssignedSanitariosModal] = useState(false);
+  const [showAssignedInstructorsModal, setShowAssignedInstructorsModal] = useState(false);
 
   useEffect(() => {
     const fetchCenters = async () => {
@@ -73,6 +78,56 @@ const CenterList = () => {
     }
   };
 
+  const handleAssignInstructor = async (centerId) => {
+    setSelectedCenter(centerId);
+    try {
+      const res = await axios.get('http://localhost:5000/api/instructors');
+      setAllInstructors(res.data);
+      setShowInstructorModal(true);
+    } catch (err) {
+      console.error('Error fetching instructors:', err);
+    }
+  };
+
+  const handleAddInstructor = async () => {
+    if (!instructorToAdd) return;
+
+    try {
+      await axios.post('http://localhost:5000/api/centers/assign-instructor', {
+        centerId: selectedCenter,
+        instructorId: instructorToAdd,
+      });
+      alert('Istruttore assegnato con successo!');
+      setInstructorToAdd('');
+      setShowInstructorModal(false);
+    } catch (err) {
+      console.error('Error assigning instructor:', err);
+    }
+  };
+
+  const handleViewInstructors = async (centerId) => {
+    setSelectedCenter(centerId);
+    try {
+      const res = await axios.get(`http://localhost:5000/api/centers/${centerId}/instructors`);
+      setInstructors(res.data);
+      setShowAssignedInstructorsModal(true);
+    } catch (err) {
+      console.error('Error fetching assigned instructors:', err);
+    }
+  };
+
+  const handleRemoveInstructor = async (instructorId) => {
+    try {
+      await axios.post('http://localhost:5000/api/centers/remove-instructor', {
+        centerId: selectedCenter,
+        instructorId,
+      });
+      setInstructors(instructors.filter((i) => i._id !== instructorId));
+    } catch (err) {
+      console.error('Error removing instructor:', err);
+    }
+  };
+
   return (
     <div className="container mt-4">
       <h1 className="mb-4">Lista Centri</h1>
@@ -109,8 +164,18 @@ const CenterList = () => {
                   >
                     Assegna Sanitario
                   </button>
-                  <button className="btn btn-primary mb-2">Istruttori</button>
-                  <button className="btn btn-primary mb-2">Assegna Istruttori</button>
+                  <button
+                    className="btn btn-primary mb-2"
+                    onClick={() => handleViewInstructors(center._id)}
+                  >
+                    Istruttori
+                  </button>
+                  <button
+                    className="btn btn-primary mb-2"
+                    onClick={() => handleAssignInstructor(center._id)}
+                  >
+                    Assegna Istruttori
+                  </button>
                   <button className="btn btn-primary mb-2">Abilita</button>
                   <button className="btn btn-danger mb-2">Elimina</button>
                   <button
@@ -164,6 +229,43 @@ const CenterList = () => {
         </div>
       )}
 
+      {/* Modal per Assegnare Istruttore */}
+      {showInstructorModal && (
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Assegna Istruttore</h5>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setShowInstructorModal(false)}
+                >
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <select
+                  className="form-control mb-3"
+                  value={instructorToAdd}
+                  onChange={(e) => setInstructorToAdd(e.target.value)}
+                >
+                  <option value="">Seleziona Istruttore</option>
+                  {allInstructors.map((instructor) => (
+                    <option key={instructor._id} value={instructor._id}>
+                      {instructor.firstName} {instructor.lastName}
+                    </option>
+                  ))}
+                </select>
+                <button className="btn btn-primary" onClick={handleAddInstructor}>
+                  Assegna
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal per Visualizzare Sanitari */}
       {showAssignedSanitariosModal && (
         <div className="modal show d-block" tabIndex="-1">
@@ -187,6 +289,41 @@ const CenterList = () => {
                       <button
                         className="btn btn-danger btn-sm"
                         onClick={() => handleRemoveSanitario(sanitario._id)}
+                      >
+                        Elimina
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal per Visualizzare Istruttori */}
+      {showAssignedInstructorsModal && (
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Istruttori Associati</h5>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setShowAssignedInstructorsModal(false)}
+                >
+                  <span>&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <ul className="list-group">
+                  {instructors.map((instructor) => (
+                    <li key={instructor._id} className="list-group-item d-flex justify-content-between align-items-center">
+                      {instructor.firstName} {instructor.lastName}
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleRemoveInstructor(instructor._id)}
                       >
                         Elimina
                       </button>

@@ -4,7 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sendEmail = require('../utils/emailService');
 const axios = require('axios');
-const Sanitario = require('../models/Sanitario'); // Importa il modello del sanitario
+const Sanitario = require('../models/Sanitario');
+const Instructor = require('../models/Instructor'); // Importa il modello dell'istruttore
 
 exports.registerCenter = async (req, res) => {
   const { name, piva, address, city, region, email, phone, username, password, repeatPassword, recaptchaToken } = req.body;
@@ -14,7 +15,7 @@ exports.registerCenter = async (req, res) => {
   }
 
   // Verifica reCAPTCHA
-  const secretKey = process.env.RECAPTCHA_SECRET_KEY; // Inserisci la tua reCAPTCHA Secret Key qui o nel file .env
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
   const response = await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`);
 
   if (!response.data.success) {
@@ -41,7 +42,8 @@ exports.registerCenter = async (req, res) => {
       username,
       password: hashedPassword,
       isActive: false,
-      sanitarios: [] // Inizializza l'array dei sanitari
+      sanitarios: [],
+      instructors: [] // Inizializza l'array degli istruttori
     });
 
     await newCenter.save();
@@ -163,6 +165,57 @@ exports.getCenterSanitarios = async (req, res) => {
     res.status(200).json(center.sanitarios);
   } catch (err) {
     console.error('Error in getCenterSanitarios:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Assegna un istruttore a un centro
+exports.assignInstructor = async (req, res) => {
+  try {
+    const { centerId, instructorId } = req.body;
+    const center = await Center.findById(centerId);
+    if (!center) {
+      return res.status(404).json({ error: 'Center not found' });
+    }
+
+    if (center.instructors.includes(instructorId)) {
+      return res.status(400).json({ error: 'Istruttore già assegnato a questo centro' });
+    }
+
+    center.instructors.push(instructorId);
+    await center.save();
+    res.json({ message: 'Istruttore assegnato con successo' });
+  } catch (err) {
+    res.status(500).json({ error: 'Errore del server' });
+  }
+};
+
+// Ottiene gli istruttori assegnati a un centro
+exports.getAssignedInstructors = async (req, res) => {
+  try {
+    const center = await Center.findById(req.params.id).populate('instructors');
+    if (!center) {
+      return res.status(404).json({ error: 'Center not found' });
+    }
+    res.status(200).json(center.instructors);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Rimuove un istruttore da un centro
+exports.removeInstructor = async (req, res) => {
+  const { centerId, instructorId } = req.body;
+  try {
+    const center = await Center.findById(centerId);
+    if (!center) {
+      return res.status(404).json({ error: 'Center not found' });
+    }
+
+    center.instructors.pull(instructorId);
+    await center.save();
+    res.status(200).json(center);
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
