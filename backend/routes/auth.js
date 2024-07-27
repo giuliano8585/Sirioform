@@ -8,7 +8,3 @@ router.get('/instructors/me', auth, getLoggedInInstructor);
 router.get('/centers/me', auth, getLoggedInCenter);
 
 module.exports = router;
-
-
-
-

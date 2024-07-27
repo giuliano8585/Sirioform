@@ -6,13 +6,16 @@ module.exports = function(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Decoded Token:', decoded);  // Aggiungi questo per verificare il token decodificato
+    console.log('Decoded Token:', decoded); // Assicurati che il token sia loggato correttamente
     req.user = decoded.user;
     next();
   } catch (err) {
-    console.error('Token error:', err.message);  // Aggiungi questo per verificare eventuali errori
+    console.error('Token error:', err.message);
     res.status(401).json({ message: 'Token is not valid' });
   }
 };
+
+
+
 
 

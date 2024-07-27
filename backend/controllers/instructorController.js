@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Instructor = require('../models/Instructor');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -148,6 +149,21 @@ exports.removeSanitario = async (req, res) => {
     await instructor.save();
     res.status(200).json(instructor);
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getInstructorSanitarios = async (req, res) => {
+  try {
+    const instructorId = req.user.id;
+    console.log('Instructor ID:', instructorId); // Log dell'ID dell'istruttore
+    const instructor = await Instructor.findById(mongoose.Types.ObjectId(instructorId)).populate('sanitarios');
+    if (!instructor) {
+      return res.status(404).json({ error: 'Instructor not found' });
+    }
+    res.status(200).json(instructor.sanitarios);
+  } catch (err) {
+    console.error('Error in getInstructorSanitarios:', err); // Log dell'errore
     res.status(500).json({ error: err.message });
   }
 };

@@ -40,6 +40,10 @@ const CenterDashboard = () => {
     navigate('/view-kits');
   };
 
+  const goToSanitarios = () => {
+    navigate('/center-sanitarios');
+  };
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -55,6 +59,11 @@ const CenterDashboard = () => {
               <li className="nav-item mb-2">
                 <button className="btn btn-primary w-100" onClick={goToViewKits}>
                   Visualizza Kit
+                </button>
+              </li>
+              <li className="nav-item mb-2">
+                <button className="btn btn-primary w-100" onClick={goToSanitarios}>
+                  Visualizza Sanitari Associati
                 </button>
               </li>
             </ul>
@@ -74,5 +83,3 @@ const CenterDashboard = () => {
 };
 
 export default CenterDashboard;
-
-

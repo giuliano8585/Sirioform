@@ -40,6 +40,10 @@ const InstructorDashboard = () => {
     navigate('/view-kits');
   };
 
+  const goToViewSanitarios = () => {
+    navigate('/view-instructor-sanitarios');
+  };
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -57,12 +61,17 @@ const InstructorDashboard = () => {
                   Visualizza Kit
                 </button>
               </li>
+              <li className="nav-item mb-2">
+                <button className="btn btn-primary w-100" onClick={goToViewSanitarios}>
+                  Visualizza Sanitari
+                </button>
+              </li>
             </ul>
           </div>
         </nav>
         <main role="main" className="col-md-9 ml-sm-auto col-lg-10 px-4">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
-           
+            <h1 className="h2">Instructor Dashboard</h1>
           </div>
         </main>
       </div>

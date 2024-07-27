@@ -28,6 +28,14 @@ const CenterDashboard = () => {
     fetchData();
   }, []);
 
+  const goToViewKits = () => {
+    navigate('/view-kits');
+  };
+
+  const goToSanitarios = () => {
+    navigate('/view-sanitarios');
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -35,10 +43,6 @@ const CenterDashboard = () => {
   if (error) {
     return <div>{error}</div>;
   }
-
-  const goToViewKits = () => {
-    navigate('/view-kits');
-  };
 
   return (
     <div className="container-fluid">
@@ -57,11 +61,20 @@ const CenterDashboard = () => {
                   Visualizza Kit
                 </button>
               </li>
+              <li className="nav-item mb-2">
+                <button className="btn btn-primary w-100" onClick={goToSanitarios}>
+                  Lista Sanitari
+                </button>
+              </li>
             </ul>
           </div>
         </nav>
         <main role="main" className="col-md-9 ml-sm-auto col-lg-10 px-4">
-          <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
+          <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 className="h2">Center Dashboard</h1>
+          </div>
+          <div>
+            {/* Add content here */}
           </div>
         </main>
       </div>

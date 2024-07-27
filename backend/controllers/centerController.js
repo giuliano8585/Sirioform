@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Center = require('../models/Center');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -144,6 +145,24 @@ exports.removeSanitario = async (req, res) => {
     await center.save();
     res.status(200).json(center);
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Ottiene i sanitari assegnati al centro loggato
+exports.getCenterSanitarios = async (req, res) => {
+  try {
+    const centerId = req.user.id;
+    if (!mongoose.Types.ObjectId.isValid(centerId)) {
+      return res.status(400).json({ error: 'Invalid Center ID' });
+    }
+    const center = await Center.findById(centerId).populate('sanitarios');
+    if (!center) {
+      return res.status(404).json({ error: 'Center not found' });
+    }
+    res.status(200).json(center.sanitarios);
+  } catch (err) {
+    console.error('Error in getCenterSanitarios:', err);
     res.status(500).json({ error: err.message });
   }
 };
