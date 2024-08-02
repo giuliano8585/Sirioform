@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const CenterSanitarios = () => {
   const [sanitarios, setSanitarios] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation()
+  console.log('location: ', location);
+
 
   useEffect(() => {
     const fetchSanitarios = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/centers/me/sanitarios', {
+        const res = await axios.get(`http://localhost:5000/api/centers/${location?.state?.ceneterId}/sanitarios`, {
           headers: {
             'x-auth-token': token
           }

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const CenterDashboard = () => {
   const [data, setData] = useState(null);
+  console.log('data: ', data);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -33,7 +34,11 @@ const CenterDashboard = () => {
   };
 
   const goToSanitarios = () => {
-    navigate('/view-sanitarios');
+    navigate('/center-sanitarios',{state:{ceneterId:data?._id}});
+  };
+
+  const goToInstructors = () => {
+    navigate('/center/view-instructors',{state:{ceneterId:data?._id}});
   };
 
   if (loading) {
@@ -63,7 +68,12 @@ const CenterDashboard = () => {
               </li>
               <li className="nav-item mb-2">
                 <button className="btn btn-primary w-100" onClick={goToSanitarios}>
-                  Lista Sanitari
+                  Visualizza Sanitari Associati
+                </button>
+              </li>
+              <li className="nav-item mb-2">
+                <button className="btn btn-primary w-100" onClick={goToInstructors}>
+                  Visualizza Istruttori Associati
                 </button>
               </li>
             </ul>

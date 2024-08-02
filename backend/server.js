@@ -20,9 +20,25 @@ app.use('/api/sanitarios', require('./routes/sanitarios')); // Rotta per i sanit
 
 // Connect to MongoDB
 const mongoUri = process.env.MONGO_URI;
-mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
+// mongoose
+//   .connect(mongoUri)
+//   .then(() => console.log('MongoDB connected'))
+//   .catch((err) => console.log(err,"database not connected"));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+    });
+    console.log('MongoDB Connected');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    process.exit(1); // Exit process with failure
+  }
+};
+
+connectDB();
 
 const PORT = process.env.PORT || 5000;
 

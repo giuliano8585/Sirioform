@@ -155,15 +155,14 @@ exports.removeSanitario = async (req, res) => {
 
 exports.getInstructorSanitarios = async (req, res) => {
   try {
-    const instructorId = req.user.id;
-    console.log('Instructor ID:', instructorId); // Log dell'ID dell'istruttore
-    const instructor = await Instructor.findById(mongoose.Types.ObjectId(instructorId)).populate('sanitarios');
+    const instructorId = req.params.id;
+    const instructor = await Instructor.findById(instructorId).populate('sanitarios');
     if (!instructor) {
       return res.status(404).json({ error: 'Instructor not found' });
     }
-    res.status(200).json(instructor.sanitarios);
+    res.json(instructor.sanitarios);
   } catch (err) {
-    console.error('Error in getInstructorSanitarios:', err); // Log dell'errore
     res.status(500).json({ error: err.message });
   }
 };
+

@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const auth = require('../middleware/auth');
 const {
   registerInstructor,
   getUnapprovedInstructors,
@@ -13,6 +13,8 @@ const {
 } = require('../controllers/instructorController');
 const authMiddleware = require('../middleware/auth'); // Importa il middleware di autenticazione
 
+const router = express.Router();
+
 router.post('/register', registerInstructor);
 router.get('/unapproved', getUnapprovedInstructors);
 router.put('/approve/:id', approveInstructor);
@@ -21,11 +23,6 @@ router.get('/:id', getInstructorById);
 router.post('/assign-sanitario', assignSanitario);
 router.get('/:id/sanitarios', getAssignedSanitarios);
 router.post('/remove-sanitario', removeSanitario);
-router.get('/me/sanitarios', authMiddleware, getInstructorSanitarios); // Aggiungi questa riga
+router.get('/me/sanitarios', auth, getInstructorSanitarios);
 
 module.exports = router;
-
-
-
-
-

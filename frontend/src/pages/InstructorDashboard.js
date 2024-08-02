@@ -41,7 +41,7 @@ const InstructorDashboard = () => {
   };
 
   const goToViewSanitarios = () => {
-    navigate('/view-instructor-sanitarios');
+    navigate('/instructor/view-sanitarios', { state: { instructorId: data?._id } });
   };
 
   return (

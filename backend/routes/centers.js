@@ -1,7 +1,6 @@
 const express = require('express');
-const { assignInstructor, removeInstructor, getAssignedInstructors } = require('../controllers/centerController');
-
 const router = express.Router();
+const auth = require('../middleware/auth');
 const {
   registerCenter,
   getUnapprovedCenters,
@@ -11,24 +10,61 @@ const {
   assignSanitario,
   getAssignedSanitarios,
   removeSanitario,
-  getCenterSanitarios
+  getCenterSanitarios,
+  assignInstructor,
+  removeInstructor,
+  getAssignedInstructors,
+  getCenterInstructors,
 } = require('../controllers/centerController');
-const authMiddleware = require('../middleware/auth');
 
+// Middleware per il logging delle richieste
+// const logRequest = (req, res, next) => {
+//   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+//   next();
+// };
+
+// Applica il middleware di logging a tutte le route
+// router.use(logRequest);
+
+// Route per la registrazione di un nuovo centro
 router.post('/register', registerCenter);
-router.get('/unapproved', getUnapprovedCenters);
-router.put('/approve/:id', approveCenter);
-router.get('/me/sanitarios', authMiddleware, getCenterSanitarios); // Route senza parametri prima
+
+// Route per ottenere i centri non approvati (richiede autenticazione)
+router.get('/unapproved', auth, getUnapprovedCenters);
+
+// Route per approvare un centro (richiede autenticazione)
+router.put('/approve/:id', auth, approveCenter);
+
+// Route per ottenere tutti i centri attivi
 router.get('/', getAllCenters);
+
+// Route per ottenere un centro specifico per ID
 router.get('/:id', getCenterById);
-router.post('/assign-sanitario', assignSanitario);
+
+// Route per assegnare un sanitario a un centro (richiede autenticazione)
+router.post('/assign-sanitario', auth, assignSanitario);
+
+// Route per ottenere i sanitari assegnati a un centro specifico
 router.get('/:id/sanitarios', getAssignedSanitarios);
-router.post('/remove-sanitario', removeSanitario);
-router.post('/assign-instructor', assignInstructor);
-router.post('/remove-instructor', removeInstructor);
+
+// Route per rimuovere un sanitario da un centro (richiede autenticazione)
+router.post('/remove-sanitario', auth, removeSanitario);
+
+// Route per ottenere i sanitari del centro loggato (richiede autenticazione)
+router.get(
+  '/:centerId/sanitarios',auth, getCenterSanitarios
+);
+
+// Route per assegnare un istruttore a un centro (richiede autenticazione)
+router.post('/assign-instructor', auth, assignInstructor);
+
+// Route per rimuovere un istruttore da un centro (richiede autenticazione)
+router.post('/remove-instructor', auth, removeInstructor);
+
+// Route per ottenere gli istruttori assegnati a un centro specifico
 router.get('/:id/instructors', getAssignedInstructors);
 
+// Route per ottenere gli istruttori del centro loggato (richiede autenticazione)
+router.get('/:centerId/instructors',auth, getCenterInstructors);
 
 module.exports = router;
-
-

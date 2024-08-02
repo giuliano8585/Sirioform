@@ -8,7 +8,19 @@ const Sanitario = require('../models/Sanitario');
 const Instructor = require('../models/Instructor'); // Importa il modello dell'istruttore
 
 exports.registerCenter = async (req, res) => {
-  const { name, piva, address, city, region, email, phone, username, password, repeatPassword, recaptchaToken } = req.body;
+  const {
+    name,
+    piva,
+    address,
+    city,
+    region,
+    email,
+    phone,
+    username,
+    password,
+    repeatPassword,
+    recaptchaToken,
+  } = req.body;
 
   if (password !== repeatPassword) {
     return res.status(400).json({ error: 'Passwords do not match' });
@@ -16,7 +28,9 @@ exports.registerCenter = async (req, res) => {
 
   // Verifica reCAPTCHA
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-  const response = await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`);
+  const response = await axios.post(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`
+  );
 
   if (!response.data.success) {
     return res.status(400).json({ error: 'reCAPTCHA validation failed' });
@@ -43,13 +57,17 @@ exports.registerCenter = async (req, res) => {
       password: hashedPassword,
       isActive: false,
       sanitarios: [],
-      instructors: [] // Inizializza l'array degli istruttori
+      instructors: [], // Inizializza l'array degli istruttori
     });
 
     await newCenter.save();
 
     // Invia email di conferma
-    sendEmail(email, 'Registrazione Centro', 'Grazie per esserti registrato! Il tuo account è in attesa di approvazione.');
+    sendEmail(
+      email,
+      'Registrazione Centro',
+      'Grazie per esserti registrato! Il tuo account è in attesa di approvazione.'
+    );
 
     res.status(201).json(newCenter);
   } catch (err) {
@@ -68,10 +86,18 @@ exports.getUnapprovedCenters = async (req, res) => {
 
 exports.approveCenter = async (req, res) => {
   try {
-    const center = await Center.findByIdAndUpdate(req.params.id, { isActive: true }, { new: true });
+    const center = await Center.findByIdAndUpdate(
+      req.params.id,
+      { isActive: true },
+      { new: true }
+    );
 
     // Invia email di conferma
-    sendEmail(center.email, 'Account Attivato', 'Il tuo account è stato approvato e attivato. Puoi ora accedere al sistema.');
+    sendEmail(
+      center.email,
+      'Account Attivato',
+      'Il tuo account è stato approvato e attivato. Puoi ora accedere al sistema.'
+    );
 
     res.json(center);
   } catch (err) {
@@ -110,7 +136,9 @@ exports.assignSanitario = async (req, res) => {
     }
 
     if (center.sanitarios.includes(sanitarioId)) {
-      return res.status(400).json({ error: 'Sanitario already assigned to this center' });
+      return res
+        .status(400)
+        .json({ error: 'Sanitario already assigned to this center' });
     }
 
     center.sanitarios.push(sanitarioId);
@@ -154,19 +182,17 @@ exports.removeSanitario = async (req, res) => {
 // Ottiene i sanitari assegnati al centro loggato
 exports.getCenterSanitarios = async (req, res) => {
   try {
-    const centerId = req.user.id;
-    if (!mongoose.Types.ObjectId.isValid(centerId)) {
-      return res.status(400).json({ error: 'Invalid Center ID' });
-    }
+    const centerId = req.params.centerId;
     const center = await Center.findById(centerId).populate('sanitarios');
     if (!center) {
       return res.status(404).json({ error: 'Center not found' });
     }
-    res.status(200).json(center.sanitarios);
+
+    res.json(center.sanitarios);
   } catch (err) {
-    console.error('Error in getCenterSanitarios:', err);
     res.status(500).json({ error: err.message });
   }
+
 };
 
 // Assegna un istruttore a un centro
@@ -179,7 +205,9 @@ exports.assignInstructor = async (req, res) => {
     }
 
     if (center.instructors.includes(instructorId)) {
-      return res.status(400).json({ error: 'Istruttore già assegnato a questo centro' });
+      return res
+        .status(400)
+        .json({ error: 'Istruttore già assegnato a questo centro' });
     }
 
     center.instructors.push(instructorId);
@@ -218,4 +246,19 @@ exports.removeInstructor = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+};
+// Funzione per ottenere gli istruttori assegnati al centro loggato
+exports.getCenterInstructors = async (req, res) => {
+  try {
+    const centerId = req.params.centerId;
+    const center = await Center.findById(centerId).populate('Instructor');
+    if (!center) {
+      return res.status(404).json({ error: 'Center not found' });
+    }
+
+    res.json(center.sanitarios);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+
 };

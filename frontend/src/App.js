@@ -19,6 +19,8 @@ import ListaSanitari from './pages/ListaSanitari';
 import CenterSanitarios from './pages/CenterSanitarios';
 import ViewSanitarios from './components/ViewSanitarios';
 import ViewInstructorSanitarios from './components/ViewInstructorSanitarios';
+import ViewInstructors from './pages/ViewInstructors'; // Assicurati di importare la nuova pagina
+
 
 const App = () => {
   return (
@@ -42,6 +44,9 @@ const App = () => {
         <Route path="/center-sanitarios" element={<CenterSanitarios />} />
         <Route path="/view-sanitarios" element={<ViewSanitarios />} />
         <Route path="/view-instructor-sanitarios" element={<ViewInstructorSanitarios />} />
+        <Route path="/center/view-instructors" element={<ViewInstructors />} /> {/* Aggiunta della nuova rotta */}
+        <Route path="/instructor/view-sanitarios" element={<ViewSanitarios />} />
+
       </Routes>
     </Router>
   );
