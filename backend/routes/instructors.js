@@ -23,6 +23,6 @@ router.get('/:id', getInstructorById);
 router.post('/assign-sanitario', assignSanitario);
 router.get('/:id/sanitarios', getAssignedSanitarios);
 router.post('/remove-sanitario', removeSanitario);
-router.get('/me/sanitarios', auth, getInstructorSanitarios);
+router.get('/:instructorId/sanitarios', auth, getInstructorSanitarios);
 
 module.exports = router;
