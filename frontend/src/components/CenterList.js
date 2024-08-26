@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const CenterList = () => {
+  const token = localStorage.getItem('token');
   const [centers, setCenters] = useState([]);
   const [selectedCenter, setSelectedCenter] = useState(null);
   const [sanitarios, setSanitarios] = useState([]);
@@ -12,8 +13,10 @@ const CenterList = () => {
   const [instructorToAdd, setInstructorToAdd] = useState('');
   const [showSanitarioModal, setShowSanitarioModal] = useState(false);
   const [showInstructorModal, setShowInstructorModal] = useState(false);
-  const [showAssignedSanitariosModal, setShowAssignedSanitariosModal] = useState(false);
-  const [showAssignedInstructorsModal, setShowAssignedInstructorsModal] = useState(false);
+  const [showAssignedSanitariosModal, setShowAssignedSanitariosModal] =
+    useState(false);
+  const [showAssignedInstructorsModal, setShowAssignedInstructorsModal] =
+    useState(false);
 
   useEffect(() => {
     const fetchCenters = async () => {
@@ -38,15 +41,22 @@ const CenterList = () => {
       console.error('Error fetching sanitarios:', err);
     }
   };
-
   const handleAddSanitario = async () => {
     if (!sanitarioToAdd) return;
 
     try {
-      await axios.post('http://localhost:5000/api/centers/assign-sanitario', {
-        centerId: selectedCenter,
-        sanitarioId: sanitarioToAdd,
-      });
+      await axios.post(
+        'http://localhost:5000/api/centers/assign-sanitario',
+        {
+          centerId: selectedCenter,
+          sanitarioId: sanitarioToAdd,
+        },
+        {
+          headers: {
+            'x-auth-token': token,
+          },
+        }
+      );
       alert('Sanitario assegnato con successo!');
       setSanitarioToAdd('');
       setShowSanitarioModal(false);
@@ -58,7 +68,9 @@ const CenterList = () => {
   const handleViewSanitarios = async (centerId) => {
     setSelectedCenter(centerId);
     try {
-      const res = await axios.get(`http://localhost:5000/api/centers/${centerId}/sanitarios`);
+      const res = await axios.get(
+        `http://localhost:5000/api/centers/${centerId}/sanitarios`
+      );
       setSanitarios(res.data);
       setShowAssignedSanitariosModal(true);
     } catch (err) {
@@ -71,7 +83,11 @@ const CenterList = () => {
       await axios.post('http://localhost:5000/api/centers/remove-sanitario', {
         centerId: selectedCenter,
         sanitarioId,
-      });
+      }, {
+        headers: {
+          'x-auth-token': token,
+        },
+      },);
       setSanitarios(sanitarios.filter((s) => s._id !== sanitarioId));
     } catch (err) {
       console.error('Error removing sanitario:', err);
@@ -108,7 +124,9 @@ const CenterList = () => {
   const handleViewInstructors = async (centerId) => {
     setSelectedCenter(centerId);
     try {
-      const res = await axios.get(`http://localhost:5000/api/centers/${centerId}/instructors`);
+      const res = await axios.get(
+        `http://localhost:5000/api/centers/${centerId}/instructors`
+      );
       setInstructors(res.data);
       setShowAssignedInstructorsModal(true);
     } catch (err) {
@@ -129,11 +147,11 @@ const CenterList = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <h1 className="mb-4">Lista Centri</h1>
-      <div className="table-responsive">
-        <table className="table table-striped table-bordered">
-          <thead className="thead-dark">
+    <div className='container mt-4'>
+      <h1 className='mb-4'>Lista Centri</h1>
+      <div className='table-responsive'>
+        <table className='table table-striped table-bordered'>
+          <thead className='thead-dark'>
             <tr>
               <th>Codice Univoco</th>
               <th>Denominazione</th>
@@ -159,27 +177,27 @@ const CenterList = () => {
                 <td>{center.email}</td>
                 <td>
                   <button
-                    className="btn btn-primary mb-2"
+                    className='btn btn-primary mb-2'
                     onClick={() => handleAssignSanitario(center._id)}
                   >
                     Assegna Sanitario
                   </button>
                   <button
-                    className="btn btn-primary mb-2"
+                    className='btn btn-primary mb-2'
                     onClick={() => handleViewInstructors(center._id)}
                   >
                     Istruttori
                   </button>
                   <button
-                    className="btn btn-primary mb-2"
+                    className='btn btn-primary mb-2'
                     onClick={() => handleAssignInstructor(center._id)}
                   >
                     Assegna Istruttori
                   </button>
-                  <button className="btn btn-primary mb-2">Abilita</button>
-                  <button className="btn btn-danger mb-2">Elimina</button>
+                  <button className='btn btn-primary mb-2'>Abilita</button>
+                  <button className='btn btn-danger mb-2'>Elimina</button>
                   <button
-                    className="btn btn-info"
+                    className='btn btn-info'
                     onClick={() => handleViewSanitarios(center._id)}
                   >
                     Lista Sanitari
@@ -190,37 +208,45 @@ const CenterList = () => {
           </tbody>
         </table>
       </div>
-      <button className="btn btn-secondary" onClick={() => window.history.back()}>Indietro</button>
+      <button
+        className='btn btn-secondary'
+        onClick={() => window.history.back()}
+      >
+        Indietro
+      </button>
 
       {/* Modal per Assegnare Sanitario */}
       {showSanitarioModal && (
-        <div className="modal show d-block" tabIndex="-1">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Assegna Sanitario</h5>
+        <div className='modal show d-block' tabIndex='-1'>
+          <div className='modal-dialog'>
+            <div className='modal-content'>
+              <div className='modal-header'>
+                <h5 className='modal-title'>Assegna Sanitario</h5>
                 <button
-                  type="button"
-                  className="close"
+                  type='button'
+                  className='close'
                   onClick={() => setShowSanitarioModal(false)}
                 >
                   <span>&times;</span>
                 </button>
               </div>
-              <div className="modal-body">
+              <div className='modal-body'>
                 <select
-                  className="form-control mb-3"
+                  className='form-control mb-3'
                   value={sanitarioToAdd}
                   onChange={(e) => setSanitarioToAdd(e.target.value)}
                 >
-                  <option value="">Seleziona Sanitario</option>
+                  <option value=''>Seleziona Sanitario</option>
                   {allSanitarios.map((sanitario) => (
                     <option key={sanitario._id} value={sanitario._id}>
                       {sanitario.firstName} {sanitario.lastName}
                     </option>
                   ))}
                 </select>
-                <button className="btn btn-primary" onClick={handleAddSanitario}>
+                <button
+                  className='btn btn-primary'
+                  onClick={handleAddSanitario}
+                >
                   Assegna
                 </button>
               </div>
@@ -231,33 +257,36 @@ const CenterList = () => {
 
       {/* Modal per Assegnare Istruttore */}
       {showInstructorModal && (
-        <div className="modal show d-block" tabIndex="-1">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Assegna Istruttore</h5>
+        <div className='modal show d-block' tabIndex='-1'>
+          <div className='modal-dialog'>
+            <div className='modal-content'>
+              <div className='modal-header'>
+                <h5 className='modal-title'>Assegna Istruttore</h5>
                 <button
-                  type="button"
-                  className="close"
+                  type='button'
+                  className='close'
                   onClick={() => setShowInstructorModal(false)}
                 >
                   <span>&times;</span>
                 </button>
               </div>
-              <div className="modal-body">
+              <div className='modal-body'>
                 <select
-                  className="form-control mb-3"
+                  className='form-control mb-3'
                   value={instructorToAdd}
                   onChange={(e) => setInstructorToAdd(e.target.value)}
                 >
-                  <option value="">Seleziona Istruttore</option>
+                  <option value=''>Seleziona Istruttore</option>
                   {allInstructors.map((instructor) => (
                     <option key={instructor._id} value={instructor._id}>
                       {instructor.firstName} {instructor.lastName}
                     </option>
                   ))}
                 </select>
-                <button className="btn btn-primary" onClick={handleAddInstructor}>
+                <button
+                  className='btn btn-primary'
+                  onClick={handleAddInstructor}
+                >
                   Assegna
                 </button>
               </div>
@@ -268,26 +297,29 @@ const CenterList = () => {
 
       {/* Modal per Visualizzare Sanitari */}
       {showAssignedSanitariosModal && (
-        <div className="modal show d-block" tabIndex="-1">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Sanitari Associati</h5>
+        <div className='modal show d-block' tabIndex='-1'>
+          <div className='modal-dialog'>
+            <div className='modal-content'>
+              <div className='modal-header'>
+                <h5 className='modal-title'>Sanitari Associati</h5>
                 <button
-                  type="button"
-                  className="close"
+                  type='button'
+                  className='close'
                   onClick={() => setShowAssignedSanitariosModal(false)}
                 >
                   <span>&times;</span>
                 </button>
               </div>
-              <div className="modal-body">
-                <ul className="list-group">
+              <div className='modal-body'>
+                <ul className='list-group'>
                   {sanitarios.map((sanitario) => (
-                    <li key={sanitario._id} className="list-group-item d-flex justify-content-between align-items-center">
+                    <li
+                      key={sanitario._id}
+                      className='list-group-item d-flex justify-content-between align-items-center'
+                    >
                       {sanitario.firstName} {sanitario.lastName}
                       <button
-                        className="btn btn-danger btn-sm"
+                        className='btn btn-danger btn-sm'
                         onClick={() => handleRemoveSanitario(sanitario._id)}
                       >
                         Elimina
@@ -303,26 +335,29 @@ const CenterList = () => {
 
       {/* Modal per Visualizzare Istruttori */}
       {showAssignedInstructorsModal && (
-        <div className="modal show d-block" tabIndex="-1">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Istruttori Associati</h5>
+        <div className='modal show d-block' tabIndex='-1'>
+          <div className='modal-dialog'>
+            <div className='modal-content'>
+              <div className='modal-header'>
+                <h5 className='modal-title'>Istruttori Associati</h5>
                 <button
-                  type="button"
-                  className="close"
+                  type='button'
+                  className='close'
                   onClick={() => setShowAssignedInstructorsModal(false)}
                 >
                   <span>&times;</span>
                 </button>
               </div>
-              <div className="modal-body">
-                <ul className="list-group">
+              <div className='modal-body'>
+                <ul className='list-group'>
                   {instructors.map((instructor) => (
-                    <li key={instructor._id} className="list-group-item d-flex justify-content-between align-items-center">
+                    <li
+                      key={instructor._id}
+                      className='list-group-item d-flex justify-content-between align-items-center'
+                    >
                       {instructor.firstName} {instructor.lastName}
                       <button
-                        className="btn btn-danger btn-sm"
+                        className='btn btn-danger btn-sm'
                         onClick={() => handleRemoveInstructor(instructor._id)}
                       >
                         Elimina
