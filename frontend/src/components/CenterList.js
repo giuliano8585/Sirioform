@@ -97,7 +97,11 @@ const CenterList = () => {
   const handleAssignInstructor = async (centerId) => {
     setSelectedCenter(centerId);
     try {
-      const res = await axios.get('http://localhost:5000/api/instructors');
+      const res = await axios.get('http://localhost:5000/api/instructors',{
+        headers: {
+          'x-auth-token': token,
+        },
+      });
       setAllInstructors(res.data);
       setShowInstructorModal(true);
     } catch (err) {
@@ -112,6 +116,10 @@ const CenterList = () => {
       await axios.post('http://localhost:5000/api/centers/assign-instructor', {
         centerId: selectedCenter,
         instructorId: instructorToAdd,
+      },{
+        headers: {
+          'x-auth-token': token,
+        },
       });
       alert('Istruttore assegnato con successo!');
       setInstructorToAdd('');
@@ -125,7 +133,11 @@ const CenterList = () => {
     setSelectedCenter(centerId);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/centers/${centerId}/instructors`
+        `http://localhost:5000/api/centers/${centerId}/instructors`,{
+          headers: {
+            'x-auth-token': token,
+          },
+        }
       );
       setInstructors(res.data);
       setShowAssignedInstructorsModal(true);
@@ -139,6 +151,10 @@ const CenterList = () => {
       await axios.post('http://localhost:5000/api/centers/remove-instructor', {
         centerId: selectedCenter,
         instructorId,
+      },{
+        headers: {
+          'x-auth-token': token,
+        },
       });
       setInstructors(instructors.filter((i) => i._id !== instructorId));
     } catch (err) {
